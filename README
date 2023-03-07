@@ -4,6 +4,6 @@ This the Agent-Based Model(ABM) of Tropical Tuna movement I developed for the 4t
 
 SchoolingV28 is the 28th version of this model and contains 12 classes.  3 fish objects, 1 FAD object, a few tools (importer, exporter, AnglesToCoords), a GUI, and  Ocean controller class.  To manipulate the model runs, parameters are changed in the Ocean class, the Fish and FAD classes will fetch the parameters required for movement from Ocean.  
 
-The model will not execute without the environemental inputs and a designated output.  
+The model will not execute without the environemental inputs and a designated output.  I would recommend viewing BET.java or Ocean.java in the src file as code samples.  
 
-A video example of an older version of the model can be seen here:  https://apnorelli.shinyapps.io/video_viewer/
+A video example of an older version of the model running can be seen here:  https://apnorelli.shinyapps.io/video_viewer/
