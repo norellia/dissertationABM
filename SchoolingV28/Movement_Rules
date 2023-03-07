@@ -1,0 +1,149 @@
+//Basic Movement
+
+	//Brownian motion/random 9 squares
+		
+		//Move distance are still one step in each direction for this simple case
+		double x = Ocean.spaceYFT.stx( loc.x + Ocean.getRand().nextInt( 3 ) - 1 );
+		double y = Ocean.spaceYFT.sty( loc.y + Ocean.getRand().nextInt( 3 ) - 1 );
+
+	//Angle Based Movement - Requires AngleToCoords.java
+		
+		//One step in any direction to a random degree
+		int angle = Ocean.getRand().nextInt( 360 );  //up to and not including 360
+		
+		Double2D locIncrements = AngleToCoords.getLoc( angle );
+		bestx = (int) Ocean.spaceYFT.stx( loc.x + locIncrements.x );
+		besty = (int) Ocean.spaceYFT.sty( loc.y + locIncrements.y );
+
+		
+	//Cauchy Correlated Random Walk
+		
+		//Use the cauchy equation to calculate a similar angle to the previous angle
+		double newAngle = pangle + Math.toDegrees(2*Math.atan(Ocean.cc*Math.tan((Ocean.getRand().nextDouble()-0.5))*Math.PI)) ;
+		//make sure the angle is between 0-360.  
+		if(newAngle >= 360) newAngle = newAngle-360;
+		if(newAngle < 0) newAngle = newAngle+360;
+		int angle = (int) newAngle;
+		
+		Double2D locIncrements = AngleToCoords.getLoc( angle );
+		double x = Ocean.spaceBET.stx( loc.x + locIncrements.x );
+		double y = Ocean.spaceBET.sty( loc.y + locIncrements.y );
+		
+		
+	//Ending needed for almost all:  
+		
+		//create a new instance of Double2d
+		Double2D locNew = new Double2D( x, y ); 
+		//remember the new settings
+		setLoc( locNew );
+		setPangle( angle );
+
+	
+	//Edge of map control where the fish stop or turn around at the edge of the map.  	
+		if (loc.x == 0 | loc.x == Ocean.width-1 | loc.y == 0 | loc.y == Ocean.height-1) {  //if touching an edge of the map
+		if(stopped == 0) {
+		bestx = (int) loc.x;  //stop movement
+		besty = (int) loc.y;
+		stopped++;  //add 1 to the stop counter
+		}else {
+			int turn = Ocean.getRand().nextInt( 100 );  //chance of return from out of bounds = 1/100
+			if(turn == 0) {
+				if(pangle >= 180) {
+				Double2D locIncrements = AngleToCoords.getLoc( pangle - 180);
+				bestx = (int) Ocean.spaceYFT.stx( loc.x + locIncrements.x );
+				besty = (int) Ocean.spaceYFT.sty( loc.y + locIncrements.y );
+				}else {
+				Double2D locIncrements = AngleToCoords.getLoc( pangle + 180 );
+				bestx = (int) Ocean.spaceYFT.stx( loc.x + locIncrements.x );
+				besty = (int) Ocean.spaceYFT.sty( loc.y + locIncrements.y );
+				}
+			} else {
+				bestx = (int) loc.x;  //stop movement
+				besty = (int) loc.y;
+			}
+		}
+	}else{
+		
+		
+		
+//Possible Rules
+
+//IF Statements
+	//Random Movement Probability
+		//RMP is either boolean or double % and represents the chance that
+		//the individual moves randomly
+		if (randomMovementProbability == true) {}  // go to random place
+	
+	//Size Dependent Movement
+        if (size == 1) {};  // can be used to add size dependent movement
+
+		
+		
+//Interactions with Fish
+		
+	//adapt to the same angle as your neighbor
+		
+        //not sure if this is for nearest neighbor or a random one, 
+		//might need to try with the first version of .get()
+		Bag neighborsBET = Ocean.spaceBET.getNeighborsExactlyWithinDistance( loc, Ocean.getNeighborhood(), true, true, false, null );
+		if( neighborsBET != null && neighborsBET.size() > 1 )
+		{			
+			for( int i = 0; i < neighborsBET.size(); i++ )
+			{
+				BET bet = ( BET ) neighborsBET.get(i);
+				if( bet != null)
+				{
+					near = bet.pangle;
+				}
+			}	
+		}
+		
+//Interactions with Environment
+       
+	//Temperature example
+		//each individual has an ideal temperature that they move toward.  
+		
+		//need to start with more information to cycle properly
+		int myx = (int) loc.x;
+        int myy = (int) loc.y;
+        
+        final int START=-1;
+        int bestx = START;
+        int besty = 0;
+        
+        if( Ocean.valgrid.field[myx][myy] > idealTemp )  // go to coldest place
+        {
+        for(int x=-1;x<2;x++)
+            for (int y=-1;y<2;y++)
+                if (!(x==0 && y==0))
+                    {
+                    int xx = (int) Ocean.spaceYFT.stx(x + myx);    // toroidal
+                    int yy = (int) Ocean.spaceYFT.sty(y + myy);       // toroidal
+                    if (bestx==START ||
+                        (Ocean.valgrid.field[xx][yy] < Ocean.valgrid.field[bestx][besty]) ||
+                        (Ocean.valgrid.field[xx][yy] == Ocean.valgrid.field[bestx][besty] ))  // not uniform, but enough to break up the go-up-and-to-the-left syndrome
+                        { bestx = xx; besty = yy; }
+                    }
+        }
+        else if ( Ocean.valgrid.field[myx][myy] < idealTemp )  // go to warmest place
+        {
+        for(int x=-1;x<2;x++)
+            for (int y=-1;y<2;y++)
+                if (!(x==0 && y==0))
+                    {
+                    int xx = (int) Ocean.spaceYFT.stx(x + myx);    // toroidal
+                    int yy = (int) Ocean.spaceYFT.sty(y + myy);       // toroidal
+                    if (bestx==START || 
+                        (Ocean.valgrid.field[xx][yy] > Ocean.valgrid.field[bestx][besty]) ||
+                        (Ocean.valgrid.field[xx][yy] == Ocean.valgrid.field[bestx][besty] ))  // && Ocean.getRand().nextBoolean() not uniform, but enough to break up the go-up-and-to-the-left syndrome
+                        { bestx = xx; besty = yy; }
+                    }
+        }
+        else            // stay put
+        {
+        bestx = myx;
+        besty = myy;
+        }
+
+       
+		
