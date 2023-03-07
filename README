@@ -1,13 +1,8 @@
 Hello Reader!  
 
-This the Agent-Based Model(ABM) of Tropical Tuna movement I developed for the 4th chapter of my PhD Dissertation titled: "Developing and Validating an Agent-Based 
-model of tropical tuna behaviors in the eastern, central Atlantic Ocean".  The goal of this chapter was to identify the simulated movement ruleset that best matches
-real, tagged fish.  We limited the environemental factors to Sea Surface Temperature (SST) and Fish Aggregation Devices (FADs), so rulesets included various levels 
-of randomness, SST preferences, and either followed or ignored FADs.  
+This the Agent-Based Model(ABM) of Tropical Tuna movement I developed for the 4th chapter of my PhD Dissertation titled: "Developing and Validating an Agent-Based model of tropical tuna behaviors in the eastern, central Atlantic Ocean".  The goal of this chapter was to identify the simulated movement ruleset that best matches real, tagged fish.  We limited the environemental factors to Sea Surface Temperature (SST) and Fish Aggregation Devices (FADs), so rulesets included various levels of randomness, SST preferences, and either followed or ignored FADs.  
 
-SchoolingV28 is the 28th version of this model and contains 12 classes.  3 fish objects, 1 FAD object, a few tools (importer, exporter, AnglesToCoords), a GUI, and 
-Ocean controller class.  To manipulate the model runs, parameters are changed in the Ocean class, the Fish and FAD classes will fetch the parameters required for 
-movement from Ocean.  
+SchoolingV28 is the 28th version of this model and contains 12 classes.  3 fish objects, 1 FAD object, a few tools (importer, exporter, AnglesToCoords), a GUI, and  Ocean controller class.  To manipulate the model runs, parameters are changed in the Ocean class, the Fish and FAD classes will fetch the parameters required for movement from Ocean.  
 
 The model will not execute without the environemental inputs and a designated output.  
 
